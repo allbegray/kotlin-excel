@@ -6,13 +6,14 @@ import allbegray.excel.extension.setBorder
 import allbegray.excel.extension.setBorderColor
 import allbegray.excel.style.DefaultExcelCellStyle
 import allbegray.excel.style.ExcelCellStyle
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.poi.common.usermodel.HyperlinkType
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.streaming.SXSSFSheet
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.OutputStream
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Field
@@ -32,7 +33,7 @@ abstract class AbstractExcelGenerator<T>(
 ) : ExcelGenerator<T> {
 
     companion object {
-        private val logger = KotlinLogging.logger {}
+        private val logger: Logger = LoggerFactory.getLogger(AbstractExcelGenerator::class.java)
 
         private val DEFAULT_HEADER_STYLE = "${this::class.java.name}.DEFAULT_HEADER_STYLE"
         private val DEFAULT_BODY_STYLE = "${this::class.java.name}.DEFAULT_BODY_STYLE"
@@ -289,7 +290,7 @@ abstract class AbstractExcelGenerator<T>(
                     } catch (_: URISyntaxException) {
                       // ignore
                     } catch (e: Exception) {
-                        logger.warn(e) { "hyperlink 생성 오류. 컬럼 내용 : $str" }
+                        logger.warn("hyperlink 생성 오류. 컬럼 내용 : $str", e)
                     }
                 }
             }

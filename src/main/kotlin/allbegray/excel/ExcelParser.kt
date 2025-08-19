@@ -1,20 +1,18 @@
 package allbegray.excel
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.poi.ss.formula.eval.ErrorEval
 import org.apache.poi.ss.usermodel.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.InputStream
 
 /**
  * 엑셀 파싱 유틸리티.
  *
- * 억지로 Row 데이터를 POJO 에 집어 넣어서 리턴 하려는 시도 하지 말 것.
- *
- * 특정한 변환 라이브러리를 강제 하지 마라.
  */
 object ExcelParser {
 
-    private val logger = KotlinLogging.logger {}
+    private val logger: Logger = LoggerFactory.getLogger(ExcelParser::class.java)
 
     private fun cellValue(cell: Cell?, formulaEvaluator: FormulaEvaluator): Any? {
         if (cell == null) return null
@@ -58,7 +56,7 @@ object ExcelParser {
 
     private fun cellValue(row: Row, cellnum: Int, formulaEvaluator: FormulaEvaluator): Any? {
         val cell = row.getCell(cellnum)
-        return allbegray.excel.ExcelParser.cellValue(cell, formulaEvaluator)
+        return cellValue(cell, formulaEvaluator)
     }
 
     fun parseWithoutHeader(workbook: Workbook, sheetIndex: Int = 0, block: (row: List<Any?>) -> Unit) {
@@ -69,7 +67,7 @@ object ExcelParser {
         for (rownum in 0..sheet.lastRowNum) {
             val row = sheet.getRow(rownum)
             val values = row.map { cell ->
-                allbegray.excel.ExcelParser.cellValue(cell, formulaEvaluator)
+                cellValue(cell, formulaEvaluator)
             }
             block(values)
         }
@@ -100,7 +98,7 @@ object ExcelParser {
         for (rownum in (headerRownum + 1)..sheet.lastRowNum) {
             val row = sheet.getRow(rownum)
             val map = headers.mapIndexed { cellnum, name ->
-                val value = allbegray.excel.ExcelParser.cellValue(row, cellnum, formulaEvaluator)
+                val value = cellValue(row, cellnum, formulaEvaluator)
                 name to value
             }.toMap()
 
