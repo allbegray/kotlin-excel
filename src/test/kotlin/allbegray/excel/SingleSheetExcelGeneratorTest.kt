@@ -11,6 +11,8 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.junit.jupiter.api.Test
 import java.io.FileOutputStream
 import java.time.LocalDateTime
+import java.time.Year
+import kotlin.random.Random
 
 class SingleSheetExcelGeneratorTest {
 
@@ -70,7 +72,9 @@ class SingleSheetExcelGeneratorTest {
             "컬럼1",
             "컬럼2",
             "컬럼3",
-            "컬럼4"
+            "컬럼4",
+            "컬럼5",
+            "컬럼6"
         ],
         // 헤더 고정
         freezeHeaderPane = true
@@ -80,14 +84,20 @@ class SingleSheetExcelGeneratorTest {
         val foo: String,
         @ExcelColumn("컬럼2")
         val bar: Int,
+        val bool: Boolean = Random.nextBoolean()
     ) {
         @ExcelColumn("컬럼4")
-        val hoo: LocalDateTime = LocalDateTime.now()
+        val ldt: LocalDateTime = LocalDateTime.now()
+
+        @ExcelColumn("컬럼5")
+        val year: Year = Year.now()
 
         @ExcelColumn("컬럼3")
-        fun zoo(): String {
-            return foo.repeat(2)
-        }
+        fun zoo(): String = foo.repeat(2)
+
+        // boolean 전용 데이터 포멧팅은 없기 때문에 수동으로 포멧팅
+        @ExcelColumn("컬럼6")
+        fun excelBool(): String = if (bool) "참" else "거짓"
     }
 
     @Test
